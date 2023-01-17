@@ -1,0 +1,9 @@
+.error-message {
+    max-width: 40rem;
+    margin: 0 auto var(--space-4) auto;
+    padding: var(--space-2);
+    background-color: var(--color-error-light);
+    color: var(--color-error);
+    border-radius: var(--border-radius-small);
+    display: none;
+}
