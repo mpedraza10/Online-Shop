@@ -30,11 +30,11 @@ class User {
 	}
 
 	// Method to check if given password is the same as the stored one
-	async passwordsAreEqual(existingUser) {
+	async passwordsAreEqual(hashedPassword) {
 		// Check if the password is correct
 		const isCorrectPassword = await bcrypt.compare(
 			this.password,
-			existingUser.password
+			hashedPassword
 		);		
 
         // Returns either true or false

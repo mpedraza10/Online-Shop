@@ -9,9 +9,12 @@ const createSessionConfig = require("./config/session");
 // Custom middlewares
 const addCsrfTokenMiddleware = require("./middlewares/csrf-token");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
+const checkAuthStatusMiddleware = require("./middlewares/check-auth");
 
 // Routes
 const authRoutes = require("./routes/auth.routes");
+const baseRoutes = require("./routes/base.routes");
+const productsRoutes = require("./routes/products.routes");
 
 // Initialize our app
 const app = express();
@@ -36,8 +39,13 @@ app.use(csurf());
 // Call to the csrf custom middleware to create a locals variable with the token
 app.use(addCsrfTokenMiddleware);
 
+// Middleware to check auth status
+app.use(checkAuthStatusMiddleware);
+
 // Middleware to handle routes
+app.use(baseRoutes);
 app.use(authRoutes);
+app.use(productsRoutes);
 
 // Default error handling middleware
 app.use(errorHandlerMiddleware);

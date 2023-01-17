@@ -1,5 +1,6 @@
 // Imports
 const User = require("../models/user.model");
+const authUtil = require("../util/authentication");
 
 // Auth controller methods
 function getSignup(req, res) {
@@ -25,8 +26,8 @@ async function signup(req, res) {
 		enteredEmail !== enteredConfirmEmail ||
 		enteredPassword < 6
 	) {
-        console.log("Invalid data");
-        return res.redirect("/signup");
+		console.log("Invalid data");
+		return res.redirect("/signup");
 	}
 
 	// Create a new user using the User model
@@ -39,14 +40,14 @@ async function signup(req, res) {
 		enteredCity
 	);
 
-    // Check if entered email is not already registered
-    const isExistingUser = await user.isExistingUser();
+	// Check if entered email is not already registered
+	const isExistingUser = await user.isExistingUser();
 
-    // If we have a user with the given email then we redirect to signup
-    if (isExistingUser) {
-        console.log("Email is already registered!");
-        return res.redirect("/signup");
-    }
+	// If we have a user with the given email then we redirect to signup
+	if (isExistingUser) {
+		console.log("Email is already registered!");
+		return res.redirect("/signup");
+	}
 
 	// Now we use the signup method to store the user data in the database
 	await user.signup();
@@ -77,7 +78,7 @@ async function login(req, res) {
 	}
 
 	// Now check if the given password is correct
-	const isCorrectPassword = await user.passwordsAreEqual(existingUser);
+	const isCorrectPassword = await user.passwordsAreEqual(existingUser.password);
 
 	// If passwords are not equal we return to login
 	if (!isCorrectPassword) {
@@ -85,20 +86,16 @@ async function login(req, res) {
 		return res.redirect("/login");
 	}
 
-	// If user was created successfully we can add our session parameters
-	req.session.isAuth = true;
-
-	// Finally we redirect to login after saving the changes of the session
-	req.session.save(function () {
-		//res.redirect("/cart");
-		console.log("We are logged in!");
+    // Use util function to create a user session
+	authUtil.createUserSession(req, existingUser, function () {
+		res.redirect("/");
 	});
 }
 
 function logout(req, res) {
-	req.session.isAuth = false;
-
-	res.redirect("/login");
+    // Use util function to destroy an auth user session
+	authUtil.destroyUserAuthSession(req);
+    res.redirect("/login");
 }
 
 // Export the functions
