@@ -1,13 +1,16 @@
 // Imports
 const User = require("../models/user.model");
+
+// Util functions
 const authUtil = require("../util/authentication");
+const userDetailsAreValid = require("../util/validation");
 
 // Auth controller methods
 function getSignup(req, res) {
 	res.render("customer/auth/signup");
 }
 
-async function signup(req, res) {
+async function signup(req, res, next) {
 	// Create variables with the submitted values
 	const inputData = req.body;
 	const enteredEmail = inputData.email;
@@ -20,11 +23,15 @@ async function signup(req, res) {
 
 	// Validate given input
 	if (
-		!enteredEmail ||
-		!enteredConfirmEmail ||
-		!enteredPassword ||
-		enteredEmail !== enteredConfirmEmail ||
-		enteredPassword < 6
+		!userDetailsAreValid(
+			enteredEmail,
+            enteredConfirmEmail,
+			enteredPassword,
+			enteredFullname,
+			enteredStreet,
+			enteredPostal,
+			enteredCity
+		)
 	) {
 		console.log("Invalid data");
 		return res.redirect("/signup");
@@ -41,7 +48,13 @@ async function signup(req, res) {
 	);
 
 	// Check if entered email is not already registered
-	const isExistingUser = await user.isExistingUser();
+	let isExistingUser;
+	try {
+		isExistingUser = await user.isExistingUser();
+	} catch (error) {
+		next(error);
+		return;
+	}
 
 	// If we have a user with the given email then we redirect to signup
 	if (isExistingUser) {
@@ -50,7 +63,12 @@ async function signup(req, res) {
 	}
 
 	// Now we use the signup method to store the user data in the database
-	await user.signup();
+	try {
+		await user.signup();
+	} catch (error) {
+		next(error);
+		return;
+	}
 
 	// Finally we redirect to login
 	res.redirect("/login");
@@ -60,7 +78,7 @@ function getLogin(req, res) {
 	res.render("customer/auth/login");
 }
 
-async function login(req, res) {
+async function login(req, res, next) {
 	// Create variables with the submitted values
 	const enteredEmail = req.body.email;
 	const enteredPassword = req.body.password;
@@ -69,7 +87,13 @@ async function login(req, res) {
 	const user = new User(enteredEmail, enteredPassword);
 
 	// Check if user exists
-	const existingUser = await user.isExistingUser();
+	let existingUser;
+	try {
+		existingUser = await user.isExistingUser();
+	} catch (error) {
+		next(error);
+		return;
+	}
 
 	// If we don't have a user with the given email we return
 	if (!existingUser) {
@@ -86,16 +110,16 @@ async function login(req, res) {
 		return res.redirect("/login");
 	}
 
-    // Use util function to create a user session
+	// Use util function to create a user session
 	authUtil.createUserSession(req, existingUser, function () {
 		res.redirect("/");
 	});
 }
 
 function logout(req, res) {
-    // Use util function to destroy an auth user session
+	// Use util function to destroy an auth user session
 	authUtil.destroyUserAuthSession(req);
-    res.redirect("/login");
+	res.redirect("/login");
 }
 
 // Export the functions
