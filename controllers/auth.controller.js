@@ -6,8 +6,30 @@ const authUtil = require("../util/authentication");
 const userDetailsAreValid = require("../util/validation");
 
 // Auth controller methods
+
 function getSignup(req, res) {
-	res.render("customer/auth/signup");
+    // First we save the input data if an error occured
+	let sessionInputData = req.session.inputData;
+
+    // If is the first time we go to login or didn't make mistakes then the form is empty
+	if (!sessionInputData) {
+		sessionInputData = {
+			hasError: false,
+			email: "",
+			confirmEmail: "",
+			password: "",
+			fullname: "",
+			street: "",
+			postal: "",
+			city: "",
+		};
+	}
+
+    // If we had an error then we clear the session content since it's already saved in the sessionInputData
+	req.session.inputData = null;
+
+    // Finally we render the login view with the values empty or with the previously entered
+	res.render("customer/auth/signup", { sessionInputData: sessionInputData });
 }
 
 async function signup(req, res, next) {
@@ -25,7 +47,7 @@ async function signup(req, res, next) {
 	if (
 		!userDetailsAreValid(
 			enteredEmail,
-            enteredConfirmEmail,
+			enteredConfirmEmail,
 			enteredPassword,
 			enteredFullname,
 			enteredStreet,
@@ -33,8 +55,25 @@ async function signup(req, res, next) {
 			enteredCity
 		)
 	) {
-		console.log("Invalid data");
-		return res.redirect("/signup");
+		// We save the entered input in a temporary session
+		req.session.inputData = {
+			hasError: true,
+			title: "Invalid data!",
+			message: "Invalid input - please check your data.",
+			email: enteredEmail,
+			confirmEmail: enteredConfirmEmail,
+			password: enteredPassword,
+			fullname: enteredFullname,
+			street: enteredStreet,
+			postal: enteredPostal,
+			city: enteredCity,
+		};
+
+		// Save the session and redirect
+		req.session.save(function () {
+			res.redirect("/signup");
+		});
+		return;
 	}
 
 	// Create a new user using the User model
@@ -58,8 +97,25 @@ async function signup(req, res, next) {
 
 	// If we have a user with the given email then we redirect to signup
 	if (isExistingUser) {
-		console.log("Email is already registered!");
-		return res.redirect("/signup");
+		// We save the entered input in a temporary session
+		req.session.inputData = {
+			hasError: true,
+			title: "Invalid data!",
+			message: "The entered email is already registered.",
+			email: enteredEmail,
+			confirmEmail: enteredConfirmEmail,
+			password: enteredPassword,
+			fullname: enteredFullname,
+			street: enteredStreet,
+			postal: enteredPostal,
+			city: enteredCity,
+		};
+
+		// Save the session and redirect
+		req.session.save(function () {
+			res.redirect("/signup");
+		});
+		return;
 	}
 
 	// Now we use the signup method to store the user data in the database
@@ -75,7 +131,23 @@ async function signup(req, res, next) {
 }
 
 function getLogin(req, res) {
-	res.render("customer/auth/login");
+	// First we save the input data if an error occured
+	let sessionInputData = req.session.inputData;
+
+	// If is the first time we go to login or didn't make mistakes then the form is empty
+	if (!sessionInputData) {
+		sessionInputData = {
+			hasError: false,
+			email: "",
+			password: "",
+		};
+	}
+
+	// If we had an error then we clear the session content since it's already saved in the sessionInputData
+	req.session.inputData = null;
+
+	// Finally we render the login view with the values empty or with the previously entered
+	res.render("customer/auth/login", { sessionInputData: sessionInputData });
 }
 
 async function login(req, res, next) {
@@ -97,8 +169,20 @@ async function login(req, res, next) {
 
 	// If we don't have a user with the given email we return
 	if (!existingUser) {
-		console.log("No user with that email");
-		return res.redirect("/login");
+		// We save the entered input in a temporary session
+		req.session.inputData = {
+			hasError: true,
+			title: "Invalid data!",
+			message: "The entered email is already registered.",
+			email: enteredEmail,
+			password: enteredPassword,
+		};
+
+		// Save the session and redirect
+		req.session.save(function () {
+			res.redirect("/login");
+		});
+		return;
 	}
 
 	// Now check if the given password is correct
@@ -106,8 +190,20 @@ async function login(req, res, next) {
 
 	// If passwords are not equal we return to login
 	if (!isCorrectPassword) {
-		console.log("Password doesn't match!");
-		return res.redirect("/login");
+		// We save the entered input in a temporary session
+		req.session.inputData = {
+			hasError: true,
+			title: "Invalid data!",
+			message: "You've entered a wrong password. Please try again.",
+			email: enteredEmail,
+			password: enteredPassword,
+		};
+
+		// Save the session and redirect
+		req.session.save(function () {
+			res.redirect("/login");
+		});
+		return;
 	}
 
 	// Use util function to create a user session
