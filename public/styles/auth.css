@@ -6,3 +6,7 @@
     color: var(--color-error);
     border-radius: var(--border-radius-small);
 }
+
+.error-message h3 {
+    text-transform: uppercase;
+}

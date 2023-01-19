@@ -2,6 +2,7 @@
 function createUserSession(req, user, action) {
 	// If user was created successfully we can add our session parameters
     req.session.uid = user._id.toString();
+    req.session.isAdmin = user.isAdmin;
 
 	// Finally we redirect to login after saving the changes of the session
 	req.session.save(action);

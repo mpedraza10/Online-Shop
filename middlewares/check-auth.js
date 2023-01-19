@@ -10,6 +10,7 @@ function checkAuthStatus(req, res, next) {
     // If it is authenticated we set this values to the response locals
     res.locals.uid = uid;
     res.locals.isAuth = true;
+    res.locals.isAdmin = req.session.isAdmin;
 
     // Continue with the next middleware
     next();
