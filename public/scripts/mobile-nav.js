@@ -4,9 +4,5 @@ const mobileMenu = document.getElementById("mobile-menu");
 
 hambugerBtn.addEventListener("click", () => {
 	// Set the display to flex so that the menu shows up
-	if (mobileMenu.style.display === "none") {
-        mobileMenu.style.display = "flex";
-    } else {
-        mobileMenu.style.display = "none";
-    }
+	mobileMenu.classList.toggle('open');
 });

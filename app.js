@@ -15,6 +15,7 @@ const checkAuthStatusMiddleware = require("./middlewares/check-auth");
 const authRoutes = require("./routes/auth.routes");
 const baseRoutes = require("./routes/base.routes");
 const productsRoutes = require("./routes/products.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 // Initialize our app
 const app = express();
@@ -25,6 +26,9 @@ app.set("views", path.join(__dirname, "views"));
 
 // Serve our static files located at the public folder
 app.use(express.static("public"));
+
+// Serve our product data folder where images are located
+app.use('/products/assets', express.static("product-data")); // Only request starting with /products/assets will be served statically
 
 // Set how are we going to parse requests
 app.use(express.urlencoded({ extended: false }));
@@ -46,6 +50,7 @@ app.use(checkAuthStatusMiddleware);
 app.use(baseRoutes);
 app.use(authRoutes);
 app.use(productsRoutes);
+app.use('/admin', adminRoutes); // Every request that starts with /admin will go here
 
 // Default error handling middleware
 app.use(errorHandlerMiddleware);

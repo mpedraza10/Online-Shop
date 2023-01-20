@@ -4,7 +4,9 @@
     position: fixed; 
     top: 0;
     left: 0;
+    right: 0;
     width: 100%;    
+    max-width: 70rem;
     height: 5rem;
     margin: 0 auto;
     padding: 0 var(--space-8);
@@ -111,6 +113,10 @@ nav button:hover::after {
     display: none;
     flex-direction: column;
     align-items: center;    
+}
+
+#mobile-menu.open {
+    display: flex;
 }
 
 #mobile-menu nav {

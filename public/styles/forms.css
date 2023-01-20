@@ -7,6 +7,12 @@
     border-radius: var(--border-radius-small);
 }
 
+.product-form {
+    text-align: left;
+    max-width: 50rem;
+    margin: 0 auto;
+}
+
 input,
 label {
     display: block;
@@ -17,7 +23,8 @@ label {
     margin-bottom: var(--space-1);
 }
 
-input {
+input,
+textarea {
     font: inherit;
     width: 100%;    
     padding: var(--space-1);
