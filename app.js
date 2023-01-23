@@ -10,6 +10,7 @@ const createSessionConfig = require("./config/session");
 const addCsrfTokenMiddleware = require("./middlewares/csrf-token");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
 const checkAuthStatusMiddleware = require("./middlewares/check-auth");
+const protectRoutesMiddleware = require("./middlewares/protect-routes")
 
 // Routes
 const authRoutes = require("./routes/auth.routes");
@@ -50,6 +51,7 @@ app.use(checkAuthStatusMiddleware);
 app.use(baseRoutes);
 app.use(authRoutes);
 app.use(productsRoutes);
+app.use(protectRoutesMiddleware);
 app.use('/admin', adminRoutes); // Every request that starts with /admin will go here
 
 // Default error handling middleware
