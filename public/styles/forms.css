@@ -42,3 +42,16 @@ hr {
 .form-btns {
     margin-top: var(--space-4);
 }
+
+input[type="file"] {
+    border: none;
+}
+
+#image-upload-control img {
+    display: none;
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: var(--space-4);
+}

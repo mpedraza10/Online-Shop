@@ -54,7 +54,21 @@ class Product {
 
 		// We return the product
 		return product;
-	}
+	}    
+
+    static async delete(productId) {
+        // Convert the string id into the mongodb object id
+		let prodId;
+		try {
+			prodId = new mongodb.ObjectId(productId);
+		} catch (error) {
+			error.code = 404;
+			throw error;
+		}
+
+        // Delete the given product by id
+        await db.getDb().collection("products").deleteOne({ _id: prodId });
+    }
 
     updateImageData () {
         this.imagePath = `product-data/images/${this.image}`; // Path where the image is stored
@@ -96,7 +110,7 @@ class Product {
         // Update the image data when replacing image
         this.image = newImage;        
         this.updateImageData();
-    }
+    }        
 }
 
 // Expor our product model
