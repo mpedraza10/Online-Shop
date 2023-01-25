@@ -11,12 +11,14 @@ const addCsrfTokenMiddleware = require("./middlewares/csrf-token");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
 const checkAuthStatusMiddleware = require("./middlewares/check-auth");
 const protectRoutesMiddleware = require("./middlewares/protect-routes")
+const cartMiddleware = require("./middlewares/cart");
 
 // Routes
 const authRoutes = require("./routes/auth.routes");
 const baseRoutes = require("./routes/base.routes");
 const productsRoutes = require("./routes/products.routes");
 const adminRoutes = require("./routes/admin.routes");
+const cartRoutes = require("./routes/cart.routes");
 
 // Initialize our app
 const app = express();
@@ -34,12 +36,18 @@ app.use('/products/assets', express.static("product-data")); // Only request sta
 // Set how are we going to parse requests
 app.use(express.urlencoded({ extended: false }));
 
+// Middleware to allow ajax request parsed for json formats
+app.use(express.json());
+
 // Create our session middleware
 const sessionConfig = createSessionConfig();
 app.use(session(sessionConfig));
 
 // Middleware using protection against csrf attacks
 app.use(csurf());
+
+// Middleware to initialize or update cart
+app.use(cartMiddleware);
 
 // Call to the csrf custom middleware to create a locals variable with the token
 app.use(addCsrfTokenMiddleware);
@@ -51,6 +59,7 @@ app.use(checkAuthStatusMiddleware);
 app.use(baseRoutes);
 app.use(authRoutes);
 app.use(productsRoutes);
+app.use("/cart", cartRoutes);
 app.use(protectRoutesMiddleware);
 app.use('/admin', adminRoutes); // Every request that starts with /admin will go here
 
