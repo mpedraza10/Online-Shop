@@ -1,6 +1,6 @@
 // Select the add to cart btn
 const addToCartBtnElement = document.querySelector("#product-details button");
-const numItemsBadgeElement = document.querySelector(".nav-item .badge");
+const numItemsBadgeElement = document.querySelectorAll(".nav-item .badge");
 
 // Function to add item to cart
 async function addToCart() {
@@ -36,7 +36,9 @@ async function addToCart() {
 
     // Know we save the new total items to update front end
     const newTotalQuantity = responseData.newTotalItems;
-    numItemsBadgeElement.textContent = newTotalQuantity;
+    for (const badge of numItemsBadgeElement) {
+        badge.textContent = newTotalQuantity;
+    }
 }
 
 // Set click event lister
