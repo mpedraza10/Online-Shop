@@ -1,6 +1,7 @@
 // Imports
 const db = require("../data/database");
 const bcrypt = require("bcryptjs");
+const mongodb = require("mongodb");
 
 // User class model
 class User {
@@ -13,6 +14,21 @@ class User {
 			postal: postal,
 			city: city,
 		};
+	}
+
+	// Static method to get user by id
+	static async getUserById(userId) {
+		// Convert string user id into mongodb object id
+		const uid = new mongodb.ObjectId(userId);
+
+		// Search in the db the user with the given id
+		const user = await db
+			.getDb()
+			.collection("users")
+			.findOne({ _id: uid }, { projection: { password: 0 } });
+
+		// Return the user with the given id
+		return user;
 	}
 
 	// Method to create and insert a new user
@@ -35,10 +51,10 @@ class User {
 		const isCorrectPassword = await bcrypt.compare(
 			this.password,
 			hashedPassword
-		);		
+		);
 
-        // Returns either true or false
-        return isCorrectPassword;
+		// Returns either true or false
+		return isCorrectPassword;
 	}
 
 	// Method to check if a given email is a user registered

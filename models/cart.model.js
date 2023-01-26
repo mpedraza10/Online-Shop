@@ -22,7 +22,7 @@ class Cart {
 			// If the current item's id is the same as the product we're adding then we update its quantity and total price
 			if (item.product.id === product.id) {
 				// We update the item that was already in the cart using the cartItem object
-				cartItem.quantity = item.quantity + 1;
+				cartItem.quantity = +item.quantity + 1;
 				cartItem.totalPrice = item.totalPrice + product.price;
 				this.items[i] = cartItem; // When we finish we just update in the position were the item was with the new cartItem
 

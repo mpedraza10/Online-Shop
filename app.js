@@ -10,7 +10,7 @@ const createSessionConfig = require("./config/session");
 const addCsrfTokenMiddleware = require("./middlewares/csrf-token");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
 const checkAuthStatusMiddleware = require("./middlewares/check-auth");
-const protectRoutesMiddleware = require("./middlewares/protect-routes")
+const protectRoutesMiddleware = require("./middlewares/protect-routes");
 const cartMiddleware = require("./middlewares/cart");
 
 // Routes
@@ -19,6 +19,7 @@ const baseRoutes = require("./routes/base.routes");
 const productsRoutes = require("./routes/products.routes");
 const adminRoutes = require("./routes/admin.routes");
 const cartRoutes = require("./routes/cart.routes");
+const ordersRoutes = require("./routes/orders.routes");
 
 // Initialize our app
 const app = express();
@@ -31,7 +32,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 
 // Serve our product data folder where images are located
-app.use('/products/assets', express.static("product-data")); // Only request starting with /products/assets will be served statically
+app.use("/products/assets", express.static("product-data")); // Only request starting with /products/assets will be served statically
 
 // Set how are we going to parse requests
 app.use(express.urlencoded({ extended: false }));
@@ -59,9 +60,10 @@ app.use(checkAuthStatusMiddleware);
 app.use(baseRoutes);
 app.use(authRoutes);
 app.use(productsRoutes);
-app.use("/cart", cartRoutes);
-app.use(protectRoutesMiddleware);
-app.use('/admin', adminRoutes); // Every request that starts with /admin will go here
+app.use("/cart", cartRoutes); // Every request that starts with /cart will go here
+app.use(protectRoutesMiddleware); // Middleware to protect this routes
+app.use("/orders", ordersRoutes); // Every request that starts with /orders will go here
+app.use("/admin", adminRoutes); // Every request that starts with /admin will go here
 
 // Default error handling middleware
 app.use(errorHandlerMiddleware);
