@@ -3,9 +3,16 @@ const Order = require("../models/order.model");
 const User = require("../models/user.model");
 
 // Orders controller functions
-function getOrders(req, res) {
-	// Render the all orders view
-	res.render("customer/orders/all-orders");
+async function getOrders(req, res, next) {    
+    try {
+        // First we need to get the orders of a given user
+        const orders = await Order.findAllForUser(res.locals.uid);
+
+        // Render the all orders view
+	    res.render("customer/orders/all-orders", { orders: orders });
+    } catch (error) {
+        return next(error);
+    }	
 }
 
 async function addOrder(req, res, next) {

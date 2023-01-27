@@ -1,5 +1,6 @@
 // Imports
 const Product = require("../models/product.model");
+const Order = require("../models/order.model");
 
 // Admin controller methods
 
@@ -77,7 +78,7 @@ async function updateProduct(req, res, next) {
 
 async function deleteProduct(req, res, next) {
 	// We use static function to get delete by id
-	try {		
+	try {
 		// If there is one we know remove it
 		await Product.delete(req.params.id);
 	} catch (error) {
@@ -89,6 +90,40 @@ async function deleteProduct(req, res, next) {
 	res.json({ message: "Deleted product!" });
 }
 
+async function getOrders(req, res, next) {
+	try {
+		// Use the Order static method to get all orders of every user
+		const orders = await Order.findAll();
+
+		// Now we render the all orders management page
+		res.render("admin/orders/admin-orders", { orders: orders });
+	} catch (error) {
+		return next(error);
+	}
+}
+
+async function updateOrder(req, res, next) {
+	// Get the order id and status
+	const orderId = req.params.id;
+	const newStatus = req.body.newStatus;
+
+	try {
+		// Get the specific order by id
+		const order = await Order.findById(orderId);
+
+		// Change the status to the new one
+		order.status = newStatus;
+
+		// Save the order
+		await order.save();
+
+		// Since it's an ajax request we send a json response in this case with the new status to be used to update the dom
+		res.json({ message: "Order updated", newStatus: newStatus });
+	} catch (error) {
+		next(error);
+	}
+}
+
 // Export our controller methods
 module.exports = {
 	getProducts: getProducts,
@@ -97,4 +132,6 @@ module.exports = {
 	getUpdateProduct: getUpdateProduct,
 	updateProduct: updateProduct,
 	deleteProduct: deleteProduct,
+	getOrders: getOrders,
+	updateOrder: updateOrder,
 };

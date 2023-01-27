@@ -2,11 +2,7 @@
     <% if (!locals.isAdmin) { %>
         <li class="nav-item"><a href="/">Shop</a></li>
         <li class="nav-item"><a href="/cart">Cart <span class="badge"><%= locals.cart.totalQuantity %></span></a></li>
-    <% } %>             
-
-    <% if (locals.isAuth && !locals.isAuth) { %>
-        <li class="nav-item"><a href="/orders">Orders</a></li>
-    <% } %> 
+    <% } %>
 
     <% if (locals.isAdmin) { %>
         <li class="nav-item"><a href="/admin/products">Manage Products</a></li>
@@ -19,6 +15,7 @@
     <% } %> 
 
     <% if (locals.isAuth) { %>
+        <li class="nav-item"><a href="/orders">Orders</a></li>
         <li class="nav-item">
             <form action="/logout" method="POST">
                 <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>" >

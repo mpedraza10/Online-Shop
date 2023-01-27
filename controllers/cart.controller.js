@@ -39,7 +39,7 @@ async function updateCartItem(req, res) {
 	// Call the model updateItem function
 	const updatedItemData = await cart.updateItem(
 		req.body.productId,
-		req.body.quantity
+		+req.body.quantity
 	);
 
 	// Then overrite to update the session cart with the newly added one

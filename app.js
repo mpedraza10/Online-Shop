@@ -12,6 +12,8 @@ const errorHandlerMiddleware = require("./middlewares/error-handler");
 const checkAuthStatusMiddleware = require("./middlewares/check-auth");
 const protectRoutesMiddleware = require("./middlewares/protect-routes");
 const cartMiddleware = require("./middlewares/cart");
+const updateCartPricesMiddleware = require("./middlewares/update-cart-prices");
+const notFoundHandlerMiddleware = require("./middlewares/not-found");
 
 // Routes
 const authRoutes = require("./routes/auth.routes");
@@ -50,6 +52,9 @@ app.use(csurf());
 // Middleware to initialize or update cart
 app.use(cartMiddleware);
 
+// Middleware to update the cart prices in every request
+app.use(updateCartPricesMiddleware);
+
 // Call to the csrf custom middleware to create a locals variable with the token
 app.use(addCsrfTokenMiddleware);
 
@@ -61,9 +66,11 @@ app.use(baseRoutes);
 app.use(authRoutes);
 app.use(productsRoutes);
 app.use("/cart", cartRoutes); // Every request that starts with /cart will go here
-app.use(protectRoutesMiddleware); // Middleware to protect this routes
-app.use("/orders", ordersRoutes); // Every request that starts with /orders will go here
-app.use("/admin", adminRoutes); // Every request that starts with /admin will go here
+app.use("/orders", protectRoutesMiddleware, ordersRoutes); // Every request that starts with /orders will go here
+app.use("/admin", protectRoutesMiddleware, adminRoutes); // Every request that starts with /admin will go here
+
+// Handle 404 or not found requests
+app.use(notFoundHandlerMiddleware);
 
 // Default error handling middleware
 app.use(errorHandlerMiddleware);

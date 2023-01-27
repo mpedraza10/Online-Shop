@@ -16,6 +16,25 @@ class Product {
 		}
 	}
 
+	static async findMultiple(ids) {
+		// We convert every id into an object id
+		const productIds = ids.map((id) => {
+			return new mongodb.ObjectId(id);
+		});
+
+		// Finds all products that has an id specified in that given array
+		const products = await db
+			.getDb()
+			.collection("products")
+			.find({ _id: { $in: productIds } })
+			.toArray();
+
+		// Finally we return all the products transformed into a Product instance
+		return products.map((productDocument) => {
+			return new Product(productDocument);
+		});
+	}
+
 	static async getProductsList() {
 		// We get the products from the db and transform it to a list
 		const products = await db.getDb().collection("products").find().toArray();
@@ -54,10 +73,10 @@ class Product {
 
 		// We return the product
 		return product;
-	}    
+	}
 
-    static async delete(productId) {
-        // Convert the string id into the mongodb object id
+	static async delete(productId) {
+		// Convert the string id into the mongodb object id
 		let prodId;
 		try {
 			prodId = new mongodb.ObjectId(productId);
@@ -66,14 +85,14 @@ class Product {
 			throw error;
 		}
 
-        // Delete the given product by id
-        await db.getDb().collection("products").deleteOne({ _id: prodId });
-    }
+		// Delete the given product by id
+		await db.getDb().collection("products").deleteOne({ _id: prodId });
+	}
 
-    updateImageData () {
-        this.imagePath = `product-data/images/${this.image}`; // Path where the image is stored
+	updateImageData() {
+		this.imagePath = `product-data/images/${this.image}`; // Path where the image is stored
 		this.imageUrl = `/products/assets/images/${this.image}`; // Url used in front ent to request the image
-    }
+	}
 
 	async save() {
 		// We create the object we are going to store in the db
@@ -90,12 +109,12 @@ class Product {
 			// Convert into object id
 			const productId = new mongodb.ObjectId(this.id);
 
-            // If we don't have the image we delete it
-            if (!this.image) {
-                delete productData.image;
-            }
+			// If we don't have the image we delete it
+			if (!this.image) {
+				delete productData.image;
+			}
 
-            // Update the entry
+			// Update the entry
 			await db
 				.getDb()
 				.collection("products")
@@ -104,13 +123,13 @@ class Product {
 			// Insert the product data in the db
 			await db.getDb().collection("products").insertOne(productData);
 		}
-	}    
+	}
 
-    replaceImage(newImage) {
-        // Update the image data when replacing image
-        this.image = newImage;        
-        this.updateImageData();
-    }        
+	replaceImage(newImage) {
+		// Update the image data when replacing image
+		this.image = newImage;
+		this.updateImageData();
+	}
 }
 
 // Expor our product model
