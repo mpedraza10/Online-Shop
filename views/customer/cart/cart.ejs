@@ -15,15 +15,26 @@
         </ul>
         <div id="cart-total">
             <p>Total: $<span id="cart-total-price"><%= locals.cart.totalPrice.toFixed(2) %></span></p>
-            <% if (locals.isAuth) { %>             
+            <% if (locals.isAuth && locals.cart.totalQuantity > 0) { %>             
                 <form action="/orders?_csrf=<%= locals.csrfToken %>" method="POST">
                     <!-- <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>"> -->
                     <button class="btn">Buy Products</button>
                 </form>
-            <% } else { %> 
+            <% } else if (!locals.isAuth && locals.cart.totalQuantity === 0) { %> 
                 <div id="cart-total-fallback">
-                    <p>Log in to proceed and purchase the items.</p>
+                    <p>Log in and add items to proceed and purchase the items.</p>
+                    <a href="/" class="btn btn-alt">Add products</a>
                     <a href="/login" class="btn">Go to login</a>
+                </div>                
+            <% } else if (!locals.isAuth && locals.cart.totalQuantity > 0) { %> 
+                <div id="cart-total-fallback">
+                    <p>Log in to proceed and purchase the items.</p>                    
+                    <a href="/login" class="btn">Go to login</a>
+                </div>   
+            <% } else if (locals.isAuth && locals.cart.totalQuantity === 0) { %> 
+                <div id="cart-total-fallback">
+                    <p>Add items to proceed and purchase the items.</p>
+                    <a href="/" class="btn btn-alt">Add products</a>                    
                 </div>                
             <% } %> 
         </div>
