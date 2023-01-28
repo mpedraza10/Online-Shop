@@ -75,7 +75,7 @@ nav button::after {
 .nav-item a:active,
 nav button:hover, 
 nav button:active {
-    color: var(--color-primary);
+    color: var(--color-primary);    
 }
 
 .nav-item a:hover::after,
