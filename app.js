@@ -84,7 +84,7 @@ app.use(errorHandlerMiddleware);
 
 // Start running the server
 db.connect()
-	.then(function () {
+	.then(function () {		
 		app.listen(PORT);
 	})
 	.catch(function (error) {
