@@ -3,14 +3,14 @@ const MongoClient = mongodb.MongoClient;
 
 // Setting evironment variable
 let mongodbUrl = "mongodb://localhost:27017";
-if (process.env.MONGODB_URL) {
-	console.log(mongodbUrl);
-	mongodbUrl = process.env.MONGODB_URL;
+if (process.env.MONGODB_URL) {	
+	mongodbUrl = process.env.MONGODB_URL;	
 }
 
 let database;
 
 async function connectToDb() {
+	console.log(mongodbUrl);
 	const client = await MongoClient.connect(mongodbUrl);
 	database = client.db("online-shop");
 }
