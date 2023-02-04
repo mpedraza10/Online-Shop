@@ -3,9 +3,11 @@ const Order = require("../models/order.model");
 const User = require("../models/user.model");
 
 // Stripe payment
-const stripe = require("stripe")(
-	"sk_test_51MV0KMJsvFBajOsxN6uSix2hi1x7zb7CJ0ohj2G3mtTkvzzI95JRyNOsLuZSG7MzEd4mkOO54cAxOF1AiFAoV0T800kKeW8u4d"
-);
+let STRIPE_KEY = "";
+if (process.env.STRIPE_KEY) {
+	STRIPE_KEY = process.env.STRIPE_KEY
+}
+const stripe = require("stripe")(STRIPE_KEY);
 
 // Orders controller functions
 async function getOrders(req, res, next) {

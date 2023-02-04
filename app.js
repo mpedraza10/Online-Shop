@@ -23,6 +23,13 @@ const adminRoutes = require("./routes/admin.routes");
 const cartRoutes = require("./routes/cart.routes");
 const ordersRoutes = require("./routes/orders.routes");
 
+// Port environment variable
+let PORT = 3000;
+
+if (process.env.PORT) {
+	PORT = process.env.PORT;
+}
+
 // Initialize our app
 const app = express();
 
@@ -78,7 +85,7 @@ app.use(errorHandlerMiddleware);
 // Start running the server
 db.connect()
 	.then(function () {
-		app.listen(3000);
+		app.listen(PORT);
 	})
 	.catch(function (error) {
 		console.log("Failed to connect to the database!");
