@@ -2,13 +2,13 @@
 	"name": "onlineshop",
 	"version": "1.0.0",
 	"description": "Online shop built using express",
-	"main": "index.js",
+	"main": "app.js",
 	"engines": {
 		"node": "16.x"
 	},
 	"scripts": {
-		"start": "node index.js",
-		"dev": "nodemon index.js"
+		"start": "node app.js",
+		"dev": "nodemon app.js"
 	},
 	"keywords": [],
 	"author": "Miguel Pedraza",
